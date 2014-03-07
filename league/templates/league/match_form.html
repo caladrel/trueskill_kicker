@@ -1,0 +1,11 @@
+{% extends 'league/base_matches.html' %}
+{% block content %}
+<h1>Match results</h1>
+<ul class="nav nav-tabs">
+    <li><a href="{% url 'league:index' %}">Recent results</a></li>
+    <li><a href="{% url 'league:matches' %}">Show all results</a></li>
+    <li class="active"><a href="#">Enter results</a></li>
+</ul>
+{% load crispy_forms_tags %}
+{% crispy form %}
+{% endblock %}

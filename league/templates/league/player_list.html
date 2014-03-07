@@ -1,0 +1,30 @@
+{% extends 'league/base_players.html' %}
+{% block content %}
+<h1>Players</h1>
+<div class="panel panel-default">
+    <div class="panel-heading">Player rankings</div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tr>
+                <th>position</th>
+                <th>player</th>
+                <th>rank</th>
+                <th>µ</th>
+                <th>σ</th>
+                <th># matches</th>
+            </tr>
+            {% for player in player_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="{{ player.get_absolute_url }}">
+                            {{ player.name }}</a></td>
+                    <td>{{ player.rank|floatformat }}</td>
+                    <td>{{ player.mu|floatformat }}</td>
+                    <td>{{ player.sigma|floatformat }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

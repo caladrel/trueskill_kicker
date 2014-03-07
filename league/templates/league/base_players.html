@@ -1,0 +1,9 @@
+{% extends 'league/base.html' %}
+{% block navigation %}
+<ul class="nav navbar-nav">
+    <li><a href="{% url 'league:index' %}">Home</a></li>
+    <li ><a href="{% url 'league:index' %}">Matches</a></li>
+    <li class="active"><a href="{% url 'league:players' %}">Players</a></li>
+    <li><a href="/simulator">Simulator</a></li>
+</ul>
+{% endblock %}

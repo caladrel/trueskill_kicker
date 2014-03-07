@@ -1,0 +1,36 @@
+{% extends 'league/base_matches.html' %}
+{% block content %}
+<h1>Match results</h1>
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#">Recent results</a></li>
+    <li><a href="{% url 'league:matches' %}">Show all results</a></li>
+    <li><a href="{% url 'league:matches_enter' %}">Enter results</a></li>
+</ul>
+<div class="panel panel-default">
+    <div class="panel-heading">Recent matches</div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tr>
+                <th>Team 1</th>
+                <th>Team 2</th>
+                <th>Score</th>
+                <th>Date</th>
+            </tr>
+            {% for match in match_list %}
+                <tr>
+                    <td><a href="{{ match.team1_player1.get_absolute_url }}">
+                            {{ match.team1_player1.name }}</a> /
+                        <a href="{{ match.team1_player2.get_absolute_url }}">
+                            {{ match.team1_player2.name }}</a></td>
+                    <td><a href="{{ match.team2_player1.get_absolute_url }}">
+                            {{ match.team2_player1.name }}</a> /
+                        <a href="{{ match.team2_player2.get_absolute_url }}">
+                            {{ match.team2_player2.name }}</a></td>
+                    <td>{{ match.score_team1 }}:{{ match.score_team2 }}</td>
+                    <td>{{ match.timestamp }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

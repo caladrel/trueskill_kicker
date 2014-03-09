@@ -1,0 +1,70 @@
+{% extends 'league/base_matches.html' %}
+{% load bootstrap_pagination %}
+{% block content %}
+<h1>Match results</h1>
+<ul class="nav nav-tabs">
+    <li><a href="{% url 'league:index' %}">Recent results</a></li>
+    <li class="active"><a href="#">Show all results</a></li>
+    <li><a href="{% url 'league:matches_enter' %}">Enter results</a></li>
+</ul>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <form class="form-horizontal" role="form" method="GET">
+            <div class="form-group">
+                <label for="player" class="col-lg-2 control-label">
+                    Filter by player
+                </label>
+                <div class="col-lg-10">
+                    <select id="player" name="player" class="form-control"
+                        onchange="$('form').submit()">
+                        <option>---------</option>
+                        {% for player in player_list %}
+                            {% if player.id == selected_player.id %}
+                                <option value="{{ player.id }}" selected>
+                                    {{ player.name }}</option>
+                            {% else %}
+                                <option value="{{ player.id }}">
+                                    {{ player.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <noscript><input type="submit"></noscript>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tr>
+                <th>Team 1</th>
+                <th>Team 2</th>
+                <th>Score</th>
+                <th>Date</th>
+            </tr>
+            {% for match in match_list %}
+                <tr>
+                    <td><a href="{{ match.team1_player1.get_absolute_url }}">
+                            {% if match.team1_player1 == selected_player %}
+                            <b>{{ match.team1_player1.name }}</b>{% else %}
+                            {{ match.team1_player1.name }}{% endif %}</a> /
+                        <a href="{{ match.team1_player2.get_absolute_url }}">
+                            {% if match.team1_player2 == selected_player %}
+                            <b>{{ match.team1_player2.name }}</b>{% else %}
+                            {{ match.team1_player2.name }}{% endif %}</a></td>
+                    <td><a href="{{ match.team2_player1.get_absolute_url }}">
+                            {% if match.team2_player1 == selected_player %}
+                            <b>{{ match.team2_player1.name }}</b>{% else %}
+                            {{ match.team2_player1.name }}{% endif %}</a> /
+                        <a href="{{ match.team2_player2.get_absolute_url }}">
+                            {% if match.team2_player2 == selected_player %}
+                            <b>{{ match.team2_player2.name }}</b>{% else %}
+                            {{ match.team2_player2.name }}{% endif %}</a></td>
+                    <td>{{ match.score_team1 }}:{{ match.score_team2 }}</td>
+                    <td>{{ match.timestamp }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% bootstrap_paginate page_obj %}
+{% endblock %}

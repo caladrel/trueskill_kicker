@@ -1,0 +1,14 @@
+{% extends 'league/base_players.html' %}
+{% block content %}
+<h2>{{ player.name }}</h2>
+<ul>
+    <li>rank: {{ player.rank|floatformat }}</li>
+    <li>µ: {{ player.mu|floatformat }}</li>
+    <li>σ: {{ player.sigma|floatformat }}</li>
+</ul>
+<ul class="nav nav-pills">
+    <li>
+    <a href="{% url 'league:players' %}">Back to player overview</a>
+    </li>
+</ul>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'league/base_matches.html' %}
+{% block content %}
+<h1>Match results</h1>
+<ul class="nav nav-tabs">
+    <li><a href="{% url 'league:index' %}">Recent results</a></li>
+    <li><a href="{% url 'league:matches' %}">Show all results</a></li>
+    <li class="active"><a href="#">Enter results</a></li>
+</ul>
+<h2>New match entered</h2>
+<h3>{{ match }}</h3>
+<p>The player statistics have changed as following:</p>
+<ul>
+{% for player in player_list %}
+    <li>{{ player.name }} ({% cycle 'Attacker' 'Defender' %})</li>
+    <ul>
+        <li>rank: {{ player.old_rank|floatformat }}
+            &rarr; {{ player.rank|floatformat }}</li>
+        <li>µ: {{ player.old_mu|floatformat }}
+            &rarr; {{ player.mu|floatformat }}</li>
+        <li>σ: {{ player.old_sigma|floatformat }}
+            &rarr; {{ player.sigma|floatformat }}</li>
+    </ul>
+{% endfor %}
+</ul>
+<ul class="nav nav-pills">
+    <li><a href="{% url 'league:matches_enter' %}">Enter another match</a></li>
+    <li><a href="{% url 'league:index' %}">Back to recent matches</a></li>
+</ul>
+{% endblock %}

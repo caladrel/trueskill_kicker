@@ -18,9 +18,9 @@ class MatchForm(forms.ModelForm):
         super(MatchForm, self).__init__(*args, **kwargs)
         self.fields['score_team1'].label = 'Score'
         self.fields['score_team2'].label = 'Score'
-        self.fields['team1_player1'].label = 'Atttacker'
+        self.fields['team1_player1'].label = 'Attacker'
         self.fields['team1_player2'].label = 'Defender'
-        self.fields['team2_player1'].label = 'Atttacker'
+        self.fields['team2_player1'].label = 'Attacker'
         self.fields['team2_player2'].label = 'Defender'
 
     class Meta:
@@ -30,7 +30,6 @@ class MatchForm(forms.ModelForm):
         player_list = [v for k, v in self.cleaned_data.iteritems() if k in
                        ('team1_player1', 'team1_player2',
                         'team2_player1', 'team2_player2')]
-        print player_list
         if len(player_list) > len(set(player_list)):
             raise forms.ValidationError('You have entered duplicate players.',
                                         code='duplicate')

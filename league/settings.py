@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'f(7y0#szka9%o#h8cfq$c8*h)qj37fa1osee56-on(&k(y)&^9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 TEMPLATE_DEBUG = True
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'bootstrap_pagination',
     'league',
+    'south',
 )
 
 MIDDLEWARE_CLASSES = (

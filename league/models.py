@@ -4,10 +4,14 @@ from django.db import models
 
 class Player(models.Model):
     name = models.CharField(max_length=200)
+    name.db_index = True
     mu = models.FloatField(default=25.0)
     sigma = models.FloatField(default=25. / 3.)
     rank = models.FloatField(default=0.0)
     rank.db_index = True
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name

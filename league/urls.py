@@ -1,9 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from rest_framework import routers
 
 from league import views
 
 admin.autodiscover()
+
+router = routers.DefaultRouter()
+router.register(r'matches', views.MatchViewSet)
+router.register(r'players', views.PlayerViewSet)
 
 urlpatterns = patterns(
     '',
@@ -22,4 +27,5 @@ urlpatterns = patterns(
         url(r'^matches/enter$', views.MatchCreate.as_view(),
             name='matches_enter'),
     ), namespace='league')),
+    url(r'api/', include(router.urls)),
 )

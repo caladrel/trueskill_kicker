@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'bootstrap_pagination',
     'league',
     'south',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,7 +64,7 @@ if DEBUG:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-            }
+        }
     }
 else:
     # Parse database configuration from $DATABASE_URL
@@ -112,3 +113,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "django.core.context_processors.request",
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+    'rest_framework.serializers.HyperlinkedModelSerializer',
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'PAGINATE_BY': 100,
+}

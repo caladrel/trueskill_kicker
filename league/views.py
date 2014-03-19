@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views import generic
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, HTML, Layout
+from rest_framework import viewsets
 
 from league.models import Match, Player
 
@@ -152,4 +153,13 @@ class PlayerView(generic.ListView):
 
 
 class PlayerDetailView(generic.DetailView):
+    queryset = Player.objects.all()
+
+
+class MatchViewSet(viewsets.ReadOnlyModelViewSet):
+    model = Match
+    queryset = Match.objects.order_by('-timestamp').select_related()
+
+
+class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
     model = Player

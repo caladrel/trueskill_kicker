@@ -5,6 +5,7 @@ dj-static==0.0.5
 django-bootstrap-pagination==1.5.0
 django-crispy-forms==1.4.0
 django-toolbelt==0.0.1
+djangorestframework==2.3.13
 gunicorn==18.0
 psycopg2==2.5.2
 pystache==0.5.3

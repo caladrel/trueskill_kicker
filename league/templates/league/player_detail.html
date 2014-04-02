@@ -1,4 +1,9 @@
 {% extends 'league/base_players.html' %}
+{% block header %}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.4.6/rickshaw.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.4/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.4.6/rickshaw.min.js"></script>
+{% endblock %}
 {% block content %}
 <h2>{{ player.name }}</h2>
 <ul>
@@ -6,6 +11,46 @@
     <li>µ: {{ player.mu|floatformat }}</li>
     <li>σ: {{ player.sigma|floatformat }}</li>
 </ul>
+<div class="panel panel-default">
+    <div class="panel-heading">historical data</div>
+    <div class="panel-body">
+        <div id="dummy"></div>
+        <div id="chart"></div>
+    </div>
+</div>
+<script>
+
+var palette = new Rickshaw.Color.Palette({ scheme: 'classic9'});
+
+var data = [
+    {% for entry in history %}
+    { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
+    {% endfor %}
+    ];
+
+var graph = new Rickshaw.Graph({
+    element: document.querySelector("#chart"),
+    renderer: 'line',
+    series: [{
+        color: palette.color(),
+        data: data
+    }],
+    padding: { top: 0.1, left: 0.05 }
+});
+
+var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+var y_axis = new Rickshaw.Graph.Axis.Y( { graph: graph } );
+
+var resize = function() {
+    dummy = document.querySelector("#dummy");
+    graph.configure({ width: chart.clientWidth });
+	graph.render();
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+</script>
 <ul class="nav nav-pills">
     <li>
     <a href="{% url 'league:players' %}">Back to player overview</a>

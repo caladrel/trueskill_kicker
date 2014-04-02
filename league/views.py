@@ -159,6 +159,12 @@ class PlayerView(generic.ListView):
 class PlayerDetailView(generic.DetailView):
     queryset = Player.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super(PlayerDetailView, self).get_context_data(**kwargs)
+        context['history'] = PlayerHistory.objects.filter(
+            player=context['player']).select_related('match')
+        return context
+
 
 class MatchViewSet(viewsets.ReadOnlyModelViewSet):
     model = Match

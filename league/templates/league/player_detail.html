@@ -35,7 +35,8 @@ var graph = new Rickshaw.Graph({
         color: palette.color(),
         data: data
     }],
-    padding: { top: 0.1, left: 0.05 }
+    padding: { top: 0.1, left: 0.05 },
+    interpolation: 'bundle'
 });
 
 var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );

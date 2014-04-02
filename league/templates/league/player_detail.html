@@ -10,6 +10,7 @@
     <li>rank: {{ player.rank|floatformat }}</li>
     <li>µ: {{ player.mu|floatformat }}</li>
     <li>σ: {{ player.sigma|floatformat }}</li>
+    <li>matches played: {{ player.playerhistory_set.count }}</li>
 </ul>
 <div class="panel panel-default">
     <div class="panel-heading">historical data</div>

@@ -21,7 +21,7 @@
                     <td>{{ player.rank|floatformat }}</td>
                     <td>{{ player.mu|floatformat }}</td>
                     <td>{{ player.sigma|floatformat }}</td>
-                    <td></td>
+                    <td>{{ player.playerhistory_set.count }}</td>
                 </tr>
             {% endfor %}
         </table>

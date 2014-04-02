@@ -6,7 +6,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, HTML, Layout
 from rest_framework import viewsets
 
-from league.models import Match, Player
+from league.models import Match, Player, PlayerHistory
 
 
 class IndexView(generic.ListView):
@@ -47,6 +47,7 @@ class MatchCreate(generic.CreateView):
     def form_valid(self, form):
         from trueskill import Rating, rate
         match = form.save(commit=False)
+        histories = []
         player_list = (match.team1_player1, match.team1_player2,
                        match.team2_player1, match.team2_player2)
         ratings = [Rating(mu=p.mu, sigma=p.sigma) for p in player_list]
@@ -54,6 +55,7 @@ class MatchCreate(generic.CreateView):
                  match.score_team2 < match.score_team1]
         new_ratings = rate([ratings[0:2], ratings[2:4]], ranks=ranks)
         new_ratings = new_ratings[0] + new_ratings[1]
+        match.save()
         for i in range(len(player_list)):
             p = player_list[i]
             p.mu = new_ratings[i].mu
@@ -63,7 +65,9 @@ class MatchCreate(generic.CreateView):
             p.old_mu = ratings[i].mu
             p.old_sigma = ratings[i].sigma
             p.old_rank = p.old_mu - 3 * p.old_sigma
-        match.save()
+            histories.append(PlayerHistory(
+                match=match, player=p, mu=p.mu, sigma=p.sigma, rank=p.rank))
+        PlayerHistory.objects.bulk_create(histories)
 
         context = {
             'match': match,

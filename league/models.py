@@ -43,3 +43,12 @@ class Match(models.Model):
             self.team1_player1, self.team1_player2,
             self.team2_player1, self.team2_player2,
             self.score_team1, self.score_team2)
+
+
+class PlayerHistory(models.Model):
+    player = models.ForeignKey(Player)
+    player.db_index = True
+    mu = models.FloatField(default=25.0)
+    sigma = models.FloatField(default=25. / 3.)
+    rank = models.FloatField(default=0.0)
+    match = models.ForeignKey(Match)

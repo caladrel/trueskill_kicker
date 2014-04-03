@@ -3,6 +3,18 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.4.6/rickshaw.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.4/d3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.4.6/rickshaw.min.js"></script>
+<style>
+.rickshaw_legend {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(64,64,64,0.7);
+}
+.rickshaw_legend .action {
+    opacity: 0.7;
+    color: #fff;
+}
+</style>
 {% endblock %}
 {% block content %}
 <h1>Players</h1>
@@ -14,10 +26,7 @@
     <div class="panel-heading">historical data</div>
     <div class="panel-body">
         <div id="dummy"></div>
-        <div id="chart">
-            <div id="legend" style="position:absolute;bottom: 10px;right:10px">
-            </div>
-        </div>
+        <div id="chart"><div id="legend"></div></div>
     </div>
 </div>
 <script>
@@ -37,7 +46,7 @@ var graph = new Rickshaw.Graph({
     element: document.querySelector("#chart"),
     renderer: 'line',
     series: series,
-    padding: { top: 0.1, left: 0.05 },
+    padding: { left: 0.05 },
     interpolation: 'bundle'
 });
 

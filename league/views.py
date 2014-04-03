@@ -156,6 +156,16 @@ class PlayerView(generic.ListView):
         return Player.objects.order_by('-rank')
 
 
+class PlayerTop(generic.ListView):
+    template_name = 'league/player_top.html'
+
+    def get_queryset(self):
+        players = Player.objects.order_by('-rank')[:10]
+        for player in players:
+            player.history = player.playerhistory_set.select_related('match')
+        return players
+
+
 class PlayerDetailView(generic.DetailView):
     queryset = Player.objects.all()
 

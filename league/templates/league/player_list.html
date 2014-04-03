@@ -1,6 +1,10 @@
 {% extends 'league/base_players.html' %}
 {% block content %}
 <h1>Players</h1>
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#">List</a></li>
+    <li><a href="{% url 'league:players_top' %}">Top ten</a></li>
+</ul>
 <div class="panel panel-default">
     <div class="panel-heading">Player rankings</div>
     <div class="table-responsive">

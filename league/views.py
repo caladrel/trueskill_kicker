@@ -162,7 +162,8 @@ class PlayerTop(generic.ListView):
     def get_queryset(self):
         players = Player.objects.order_by('-rank')[:10]
         for player in players:
-            player.history = player.playerhistory_set.select_related('match')
+            player.history = player.playerhistory_set.select_related(
+                'match').order_by('match__timestamp')
         return players
 
 
@@ -172,7 +173,8 @@ class PlayerDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(PlayerDetailView, self).get_context_data(**kwargs)
         context['history'] = PlayerHistory.objects.filter(
-            player=context['player']).select_related('match')
+            player=context['player']).select_related('match').order_by(
+            'match__timestamp')
         return context
 
 

@@ -1,4 +1,7 @@
-{% extends 'league/base_players.html' %}
+{% extends 'league/base.html' %}
+{% block navigation_top %}
+<li class="active"><a href="{% url 'league:players_top' %}">Top Ten</a></li>
+{% endblock %}
 {% block header %}
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.4.6/rickshaw.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.4/d3.min.js"></script>
@@ -17,11 +20,7 @@
 </style>
 {% endblock %}
 {% block content %}
-<h1>Players</h1>
-<ul class="nav nav-tabs">
-    <li><a href="{% url 'league:players' %}">List</a></li>
-    <li class="active"><a href="#">Top ten</a></li>
-</ul>
+<h1>Top ten</h1>
 <div class="panel panel-default">
     <div class="panel-heading">historical data</div>
     <div class="panel-body">

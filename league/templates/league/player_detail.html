@@ -22,21 +22,19 @@
 <script>
 
 var palette = new Rickshaw.Color.Palette({ scheme: 'classic9'});
-
-var data = [
-    {% for entry in history %}
-    { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
-    {% endfor %}
+var series = [
+        { color: palette.color(), name: '{{ player.name }}', data: [
+        {% for entry in history %}
+        { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
+        {% endfor %}
+        ]},
     ];
 
 var graph = new Rickshaw.Graph({
     element: document.querySelector("#chart"),
     renderer: 'line',
-    series: [{
-        color: palette.color(),
-        data: data
-    }],
-    padding: { top: 0.1, left: 0.05 },
+    series: series,
+    padding: { left: 0.05 },
     interpolation: 'bundle'
 });
 
@@ -45,13 +43,12 @@ var y_axis = new Rickshaw.Graph.Axis.Y( { graph: graph } );
 
 var resize = function() {
     dummy = document.querySelector("#dummy");
-    graph.configure({ width: chart.clientWidth });
+    graph.configure({ width: chart.clientWidth, height: 600 });
 	graph.render();
 }
 
 window.addEventListener('resize', resize);
 resize();
-
 </script>
 <ul class="nav nav-pills">
     <li>

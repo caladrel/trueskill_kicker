@@ -185,3 +185,7 @@ class MatchViewSet(viewsets.ReadOnlyModelViewSet):
 
 class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
     model = Player
+
+
+def about(request):
+    return render(request, 'league/about.html')

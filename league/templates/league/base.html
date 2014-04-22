@@ -48,6 +48,9 @@ body {
                     {% block navigation_simulator %}
                     <li><a href="/simulator">Simulator</a></li>
                     {% endblock %}
+                    {% block navigation_about %}
+                    <li><a href="{% url 'league:about' %}">About</a></li>
+                    {% endblock %}
                 </ul>
                 {% endblock %}
             </div><!--/.nav-collapse -->

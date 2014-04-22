@@ -27,6 +27,7 @@ urlpatterns = patterns(
         url(r'^matches$', views.MatchView.as_view(), name='matches'),
         url(r'^matches/enter$', views.MatchCreate.as_view(),
             name='matches_enter'),
+        url(r'^about$', views.about, name='about'),
         ), namespace='league')),
     url(r'api/', include(router.urls)),
 )

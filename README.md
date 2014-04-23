@@ -12,7 +12,7 @@ is [openly available](http://trueskill.org/).
 Copyright and license
 ---------------------
 
-Copyright 2013 kicker-league.
+Copyright 2014 kicker-league.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this work except in compliance with the License.

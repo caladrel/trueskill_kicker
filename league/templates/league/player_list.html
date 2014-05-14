@@ -6,22 +6,22 @@
     <div class="table-responsive">
         <table class="table table-striped">
             <tr>
-                <th>position</th>
+                <th class="num">position</th>
                 <th>player</th>
-                <th>rank</th>
-                <th>µ</th>
-                <th>σ</th>
-                <th># matches</th>
+                <th class="num">rank</th>
+                <th class="num">µ</th>
+                <th class="num">σ</th>
+                <th class="num"># matches</th>
             </tr>
             {% for player in player_list %}
                 <tr>
-                    <td>{{ forloop.counter }}</td>
+                    <td class="num">{{ forloop.counter }}</td>
                     <td><a href="{{ player.get_absolute_url }}">
                             {{ player.name }}</a></td>
-                    <td>{{ player.rank|floatformat:2 }}</td>
-                    <td>{{ player.mu|floatformat:2 }}</td>
-                    <td>{{ player.sigma|floatformat:2 }}</td>
-                    <td>{{ player.playerhistory_set.count }}</td>
+                    <td class="num">{{ player.rank|floatformat:2 }}</td>
+                    <td class="num">{{ player.mu|floatformat:2 }}</td>
+                    <td class="num">{{ player.sigma|floatformat:2 }}</td>
+                    <td class="num">{{ player.playerhistory_set.count }}</td>
                 </tr>
             {% endfor %}
         </table>

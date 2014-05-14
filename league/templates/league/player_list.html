@@ -18,9 +18,9 @@
                     <td>{{ forloop.counter }}</td>
                     <td><a href="{{ player.get_absolute_url }}">
                             {{ player.name }}</a></td>
-                    <td>{{ player.rank|floatformat }}</td>
-                    <td>{{ player.mu|floatformat }}</td>
-                    <td>{{ player.sigma|floatformat }}</td>
+                    <td>{{ player.rank|floatformat:2 }}</td>
+                    <td>{{ player.mu|floatformat:2 }}</td>
+                    <td>{{ player.sigma|floatformat:2 }}</td>
                     <td>{{ player.playerhistory_set.count }}</td>
                 </tr>
             {% endfor %}

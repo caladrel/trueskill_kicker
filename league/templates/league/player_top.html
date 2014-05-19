@@ -33,11 +33,18 @@
 var palette = new Rickshaw.Color.Palette({ scheme: 'classic9'});
 var series = [
     {% for player in player_list %}
-        { color: palette.color(), name: '{{ player.name }}', data: [
+{
+    color: palette.color(),
+    name: '{{ player.name }}\
+        <a href="{{ player.get_absolute_url }}">\
+        <span class="action glyphicon glyphicon-share-alt"></span>\
+        </a>',
+    data: [
         {% for entry in player.history %}
-        { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
+           { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
         {% endfor %}
-        ]},
+    ]
+},
     {% endfor %}
     ];
 

@@ -13,12 +13,12 @@
 {% for player in player_list %}
     <li>{{ player.name }} ({% cycle 'Attacker' 'Defender' %})</li>
     <ul>
-        <li>rank: {{ player.old_rank|floatformat }}
-            &rarr; {{ player.rank|floatformat }}</li>
-        <li>µ: {{ player.old_mu|floatformat }}
-            &rarr; {{ player.mu|floatformat }}</li>
-        <li>σ: {{ player.old_sigma|floatformat }}
-            &rarr; {{ player.sigma|floatformat }}</li>
+        <li>rank: {{ player.old_rank|floatformat:2 }}
+            &rarr; {{ player.rank|floatformat:2 }}</li>
+        <li>µ: {{ player.old_mu|floatformat:2 }}
+            &rarr; {{ player.mu|floatformat:2 }}</li>
+        <li>σ: {{ player.old_sigma|floatformat:2 }}
+            &rarr; {{ player.sigma|floatformat:2 }}</li>
     </ul>
 {% endfor %}
 </ul>

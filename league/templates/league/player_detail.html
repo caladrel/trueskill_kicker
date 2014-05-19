@@ -54,5 +54,9 @@ resize();
     <li>
     <a href="{% url 'league:players' %}">Back to player overview</a>
     </li>
+    <li>
+    <a href="{% url 'league:matches' %}?player={{ player.id }}">
+        Schow all matches involving {{ player.name }}</a>
+    </li>
 </ul>
 {% endblock %}

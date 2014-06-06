@@ -51,22 +51,46 @@ class MatchCreate(generic.CreateView):
         player_list = (match.team1_player1, match.team1_player2,
                        match.team2_player1, match.team2_player2)
         ratings = [Rating(mu=p.mu, sigma=p.sigma) for p in player_list]
+        seperate_ratings = [
+            (Rating(mu=a.attacker_mu, sigma=a.attacker_sigma),
+             Rating(mu=d.defender_mu, sigma=d.defender_sigma))
+            for a, d in [player_list[0:2], player_list[2:4]]
+        ]
         ranks = [match.score_team2 > match.score_team1,
                  match.score_team2 < match.score_team1]
         new_ratings = rate([ratings[0:2], ratings[2:4]], ranks=ranks)
         new_ratings = new_ratings[0] + new_ratings[1]
+        new_seperate_ratings = rate(seperate_ratings, ranks=ranks)
+        new_seperate_ratings = \
+            new_seperate_ratings[0] + new_seperate_ratings[1]
         match.save()
         for i in range(len(player_list)):
             p = player_list[i]
+            s = new_seperate_ratings[i]
             p.mu = new_ratings[i].mu
             p.sigma = new_ratings[i].sigma
             p.rank = p.mu - 3 * p.sigma
+            h = PlayerHistory(match=match, player=p,
+                              mu=p.mu, sigma=p.sigma, rank=p.rank,
+                              seperate_mu=s.mu, seperate_sigma=s.sigma,
+                              seperate_rank=(s.mu - 3 * s.sigma))
+
+            if not i % 2:
+                h.was_attacker = True
+                p.attacker_mu = s.mu
+                p.attacker_sigma = s.sigma
+                p.attacker_rank = s.mu - 3 * s.sigma
+            else:
+                h.was_attacker = False
+                p.defender_mu = s.mu
+                p.defender_sigma = s.sigma
+                p.defender_rank = s.mu - 3 * s.sigma
+
             p.save()
             p.old_mu = ratings[i].mu
             p.old_sigma = ratings[i].sigma
             p.old_rank = p.old_mu - 3 * p.old_sigma
-            histories.append(PlayerHistory(
-                match=match, player=p, mu=p.mu, sigma=p.sigma, rank=p.rank))
+            histories.append(h)
         PlayerHistory.objects.bulk_create(histories)
 
         context = {

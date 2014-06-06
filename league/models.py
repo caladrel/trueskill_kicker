@@ -10,6 +10,16 @@ class Player(models.Model):
     rank = models.FloatField(default=0.0)
     rank.db_index = True
 
+    attacker_mu = models.FloatField(default=25.0)
+    attacker_sigma = models.FloatField(default=25. / 3.)
+    attacker_rank = models.FloatField(default=0.0)
+    attacker_rank.db_index = True
+
+    defender_mu = models.FloatField(default=25.0)
+    defender_sigma = models.FloatField(default=25. / 3.)
+    defender_rank = models.FloatField(default=0.0)
+    defender_rank.db_index = True
+
     class Meta:
         ordering = ['name']
 
@@ -52,3 +62,9 @@ class PlayerHistory(models.Model):
     sigma = models.FloatField(default=25. / 3.)
     rank = models.FloatField(default=0.0)
     match = models.ForeignKey(Match)
+
+    was_attacker = models.BooleanField()
+
+    seperate_mu = models.FloatField(default=25.0)
+    seperate_sigma = models.FloatField(default=25. / 3.)
+    seperate_rank = models.FloatField(default=0.0)

@@ -6,10 +6,16 @@
 {% endblock %}
 {% block content %}
 <h2>{{ player.name }}</h2>
-<ul>
+<ul class="detaillist">
     <li>rank: {{ player.rank|floatformat:2 }}</li>
     <li>µ: {{ player.mu|floatformat:2 }}</li>
     <li>σ: {{ player.sigma|floatformat:2 }}</li>
+    <li>rank<sub>attacker</sub>: {{ player.attacker_rank|floatformat:2 }}</li>
+    <li>µ<sub>attacker</sub>: {{ player.attacker_mu|floatformat:2 }}</li>
+    <li>σ<sub>attacker</sub>: {{ player.attacker_sigma|floatformat:2 }}</li>
+    <li>rank<sub>defender</sub>: {{ player.defender_rank|floatformat:2 }}</li>
+    <li>µ<sub>defender</sub>: {{ player.defender_mu|floatformat:2 }}</li>
+    <li>σ<sub>defender</sub>: {{ player.defender_sigma|floatformat:2 }}</li>
     <li>matches played: {{ player.playerhistory_set.count }}</li>
 </ul>
 <div class="panel panel-default">

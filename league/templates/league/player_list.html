@@ -9,8 +9,8 @@
                 <th class="num">position</th>
                 <th>player</th>
                 <th class="num">rank</th>
-                <th class="num">µ</th>
-                <th class="num">σ</th>
+                <th class="num">rank<sub>attacker</sub></th>
+                <th class="num">rank<sub>defender</sub></th>
                 <th class="num"># matches</th>
             </tr>
             {% for player in player_list %}
@@ -19,8 +19,8 @@
                     <td><a href="{{ player.get_absolute_url }}">
                             {{ player.name }}</a></td>
                     <td class="num">{{ player.rank|floatformat:2 }}</td>
-                    <td class="num">{{ player.mu|floatformat:2 }}</td>
-                    <td class="num">{{ player.sigma|floatformat:2 }}</td>
+                    <td class="num">{{ player.attacker_rank|floatformat:2 }}</td>
+                    <td class="num">{{ player.defender_rank|floatformat:2 }}</td>
                     <td class="num">{{ player.playerhistory_set.count }}</td>
                 </tr>
             {% endfor %}

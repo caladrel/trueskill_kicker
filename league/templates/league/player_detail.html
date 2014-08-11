@@ -43,14 +43,14 @@ var series = [
         { color: '#848f39', name: 'defender', data: [
         {% for entry in history %}
         {% if not entry.was_attacker %}
-        { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
+        { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.seperate_rank }} },
         {% endif %}
         {% endfor %}
         ]},
         { color: '#963b20', name: 'attacker', data: [
         {% for entry in history %}
         {% if entry.was_attacker %}
-        { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
+        { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.seperate_rank }} },
         {% endif %}
         {% endfor %}
         ]},

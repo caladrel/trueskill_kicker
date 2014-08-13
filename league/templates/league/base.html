@@ -65,6 +65,10 @@ sub {
                     <li><a href="{% url 'league:about' %}">About</a></li>
                     {% endblock %}
                 </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% load simplecookie_state_selector %}
+                    {% state_selector 'c' c='Combined mode' a='Attacker mode' d='Defender mode' %}
+                </ul>
                 {% endblock %}
             </div><!--/.nav-collapse -->
         </div>

@@ -1,0 +1,12 @@
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ current_name }}<b class="caret"></b></a>
+    <ul class="dropdown-menu">
+        {% for key, name in choices.items %}
+        <li>
+            <a href="{% url 'league:set_mode' %}?mode={{ key }}&url={{ url|urlencode:'' }}">
+                {{ name }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</li>

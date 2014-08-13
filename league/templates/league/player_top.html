@@ -31,22 +31,60 @@
 <script>
 
 var palette = new Rickshaw.Color.Palette({ scheme: 'classic9'});
+{% load simplecookie_state_selector %}
+{% get_state 'c' as mode %}
+{% if mode == 'd' %}
 var series = [
     {% for player in player_list %}
-{
+    {
     color: palette.color(),
     name: '{{ player.name }}\
         <a href="{{ player.get_absolute_url }}">\
         <span class="action glyphicon glyphicon-share-alt"></span>\
         </a>',
     data: [
-        {% for entry in player.history %}
-           { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
-        {% endfor %}
+    {% for entry in player.history %} {% if not entry.was_attacker %}
+    { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.seperate_rank }} },
+    {% endif %} {% endfor %}
     ]
-},
+    },
     {% endfor %}
-    ];
+];
+{% elif mode == 'd' %}
+var series = [
+    {% for player in player_list %}
+    {
+    color: palette.color(),
+    name: '{{ player.name }}\
+        <a href="{{ player.get_absolute_url }}">\
+        <span class="action glyphicon glyphicon-share-alt"></span>\
+        </a>',
+    data: [
+    {% for entry in player.history %} {% if entry.was_attacker %}
+    { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.seperate_rank }} },
+    {% endif %} {% endfor %}
+    ]
+    },
+    {% endfor %}
+];
+{% else %}
+var series = [
+    {% for player in player_list %}
+    {
+    color: palette.color(),
+    name: '{{ player.name }}\
+        <a href="{{ player.get_absolute_url }}">\
+        <span class="action glyphicon glyphicon-share-alt"></span>\
+        </a>',
+    data: [
+    {% for entry in player.history %}
+    { x: {{ entry.match.timestamp| date:'U' }}, y: {{ entry.rank }} },
+    {% endfor %}
+    ]
+    },
+    {% endfor %}
+];
+{% endif %}
 
 var graph = new Rickshaw.Graph({
     element: document.querySelector("#chart"),

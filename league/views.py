@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django import forms
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import generic
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, HTML, Layout
@@ -177,14 +177,26 @@ class MatchView(generic.ListView):
 
 class PlayerView(generic.ListView):
     def get_queryset(self):
-        return Player.objects.order_by('-rank')
+        mode = self.request.COOKIES.get('m', 'c')
+        if mode == 'a':
+            return Player.objects.order_by('-attacker_rank')
+        elif mode == 'd':
+            return Player.objects.order_by('-defender_rank')
+        else:
+            return Player.objects.order_by('-rank')
 
 
 class PlayerTop(generic.ListView):
     template_name = 'league/player_top.html'
 
     def get_queryset(self):
-        players = Player.objects.order_by('-rank')[:10]
+        mode = self.request.COOKIES.get('m', 'c')
+        if mode == 'a':
+            players = Player.objects.order_by('-attacker_rank')[:10]
+        elif mode == 'd':
+            players = Player.objects.order_by('-defender_rank')[:10]
+        else:
+            players = Player.objects.order_by('-rank')[:10]
         for player in players:
             player.history = player.playerhistory_set.select_related(
                 'match').order_by('match__timestamp')
@@ -213,3 +225,11 @@ class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
 
 def about(request):
     return render(request, 'league/about.html')
+
+
+def set_mode(request):
+    url = request.GET.get('url', 'league:index')
+    mode = request.GET.get('mode', 'c')
+    response = redirect(url)
+    response.set_cookie('m', value=mode)
+    return response

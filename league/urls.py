@@ -20,6 +20,7 @@ urlpatterns = patterns(
     url(r'^', include(patterns(
         '',
         url(r'^$', views.IndexView.as_view(), name='index'),
+        url(r'^set_mode$', views.set_mode, name='set_mode'),
         url(r'^players$', views.PlayerView.as_view(), name='players'),
         url(r'^players/top$', views.PlayerTop.as_view(), name='players_top'),
         url(r'^players/(?P<pk>\d+)$', views.PlayerDetailView.as_view(),

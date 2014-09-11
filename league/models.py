@@ -30,6 +30,12 @@ class Player(models.Model):
         from django.core.urlresolvers import reverse
         return reverse('league:player_detail', args=[str(self.id)])
 
+    def matches_attacker_count(self):
+        return self.playerhistory_set.filter(was_attacker=True).count()
+
+    def matches_defender_count(self):
+        return self.playerhistory_set.filter(was_attacker=False).count()
+
 
 class Match(models.Model):
     score_team1 = models.PositiveSmallIntegerField(

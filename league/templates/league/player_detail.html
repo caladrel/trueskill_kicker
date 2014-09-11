@@ -18,18 +18,65 @@
 {% endblock %}
 {% block content %}
 <h2>{{ player.name }}</h2>
-<ul class="detaillist">
-    <li>rank: {{ player.rank|floatformat:2 }}</li>
-    <li>µ: {{ player.mu|floatformat:2 }}</li>
-    <li>σ: {{ player.sigma|floatformat:2 }}</li>
-    <li>rank<sub>attacker</sub>: {{ player.attacker_rank|floatformat:2 }}</li>
-    <li>µ<sub>attacker</sub>: {{ player.attacker_mu|floatformat:2 }}</li>
-    <li>σ<sub>attacker</sub>: {{ player.attacker_sigma|floatformat:2 }}</li>
-    <li>rank<sub>defender</sub>: {{ player.defender_rank|floatformat:2 }}</li>
-    <li>µ<sub>defender</sub>: {{ player.defender_mu|floatformat:2 }}</li>
-    <li>σ<sub>defender</sub>: {{ player.defender_sigma|floatformat:2 }}</li>
-    <li>matches played: {{ player.playerhistory_set.count }}</li>
-</ul>
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Combined statistics</div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    rank: {{ player.rank|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    µ: {{ player.mu|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    σ: {{ player.sigma|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    matches played: {{ player.playerhistory_set.count }}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Attacker statistics</div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    rank<sub>attacker</sub>: {{ player.attacker_rank|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    µ<sub>attacker</sub>: {{ player.attacker_mu|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    σ<sub>attacker</sub>: {{ player.attacker_sigma|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    matches played: {{ player.matches_attacker_count }}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Defender statistics</div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    rank<sub>defender</sub>: {{ player.defender_rank|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    µ<sub>defender</sub>: {{ player.defender_mu|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    σ<sub>defender</sub>: {{ player.defender_sigma|floatformat:2 }}
+                </li>
+                <li class="list-group-item">
+                    matches played: {{ player.matches_defender_count }}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 <div class="panel panel-default">
     <div class="panel-heading">historical data</div>
     <div class="panel-body">

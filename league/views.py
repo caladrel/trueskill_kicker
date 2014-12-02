@@ -7,6 +7,7 @@ from crispy_forms.layout import Field, HTML, Layout
 from rest_framework import viewsets
 
 from league.models import Match, Player, PlayerHistory
+from league.serializers import MatchSerializer, PlayerSerializer
 
 
 class IndexView(generic.ListView):
@@ -26,6 +27,11 @@ class MatchForm(forms.ModelForm):
 
     class Meta:
         model = Match
+        fields = [
+            'score_team1', 'score_team2',
+            'team1_player1', 'team1_player2',
+            'team2_player1', 'team2_player2'
+        ]
 
     def clean(self, *args, **kwargs):
         player_list = [v for k, v in self.cleaned_data.iteritems() if k in
@@ -215,12 +221,13 @@ class PlayerDetailView(generic.DetailView):
 
 
 class MatchViewSet(viewsets.ReadOnlyModelViewSet):
-    model = Match
     queryset = Match.objects.order_by('-timestamp').select_related()
+    serializer_class = MatchSerializer
 
 
 class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
-    model = Player
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
 
 
 def about(request):

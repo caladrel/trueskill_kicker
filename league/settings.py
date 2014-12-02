@@ -39,7 +39,6 @@ INSTALLED_APPS = (
     'crispy_forms',
     'bootstrap_pagination',
     'league',
-    'south',
     'rest_framework',
 )
 

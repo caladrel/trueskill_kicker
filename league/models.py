@@ -69,7 +69,7 @@ class PlayerHistory(models.Model):
     rank = models.FloatField(default=0.0)
     match = models.ForeignKey(Match)
 
-    was_attacker = models.BooleanField()
+    was_attacker = models.BooleanField(default=False)
 
     seperate_mu = models.FloatField(default=25.0)
     seperate_sigma = models.FloatField(default=25. / 3.)

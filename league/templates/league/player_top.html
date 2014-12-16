@@ -1,11 +1,13 @@
 {% extends 'league/base.html' %}
+{% load staticfiles %}
 {% block navigation_top %}
 <li class="active"><a href="{% url 'league:players_top' %}">Top Ten</a></li>
 {% endblock %}
 {% block header %}
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.4.6/rickshaw.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.4.6/rickshaw.min.js"></script>
+<link rel="stylesheet" href="{% static "league/rickshaw.min.css" %}">
+<script src="//code.jquery.com/jquery.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js"></script>
+<script src="{% static "league/rickshaw.min.js" %}"></script>
 <style>
 .rickshaw_legend {
     position: absolute;

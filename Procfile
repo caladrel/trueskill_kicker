@@ -1,1 +1,1 @@
-web: gunicorn league.wsgi
+web: bin/runsvdir-dyno

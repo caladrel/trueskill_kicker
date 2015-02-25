@@ -53,20 +53,24 @@ td.num {
                     <li><a href="{% url 'league:about' %}">About</a></li>
                     {% endblock %}
                 </ul>
-                <form id="available" class="navbar-form navbar-right" style="display:none">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Player">
-                    </div>
-                    <button type="submit" class="btn btn-primary">I'm available</button>
-                </form>
-                <form id="seeking" class="navbar-form navbar-right" style="display:none">
-                    <button class="cancel btn btn-default">I'm not available</button>
-                    <button type="submit" class="btn btn-primary">I want to play now</button>
-                </form>
                 <ul class="nav navbar-nav navbar-right">
                     {% load simplecookie_state_selector %}
                     {% state_selector 'c' c='Combined mode' a='Attacker mode' d='Defender mode' %}
                 </ul>
+                <div class="navbar-right" style="display:none"></div>
+                <div id="seeking" class="btn-group navbar-right" style="display:none">
+                    <button class="cancel btn btn-default navbar-btn">I'm not available</button>
+                    <button class="submit btn btn-primary navbar-btn">
+                        I want to play now <span class="badge">0</span></button>
+                </div>
+                <div id="available" class="navbar-right navbar-btn" style="display:none">
+                    <div class="input-group" style="width:292px">
+                    <input type="text" class="form-control" placeholder="Player">
+                    <span class="input-group-btn">
+                        <button class="submit btn btn-primary" type="button">I'm available</button>
+                    </span>
+                    </div>
+                </div>
                 {% endblock %}
             </div><!--/.nav-collapse -->
         </div>
@@ -79,17 +83,27 @@ td.num {
     <script src="/socket.io/socket.io.js"></script>
     <script>
 
+function objectJoin(obj, sep) {
+    var arr = [], p, i = 0;
+    for (p in obj)
+        arr[i++] = obj[p];
+    return arr.join(sep);
+}
+
 var socket = io();
 var $available = $('#available'),
     $seeking = $('#seeking'),
-    $namefield = $available.find('input');
+    $seekingsubmit = $('#seeking .submit'),
+    $namefield = $available.find('input'),
+    $count = $('#seeking .badge');
 
 socket.on('check', function(data) {
-    if (confirm("'" + data + "' want's to play\nare you ready to play right now?")) {
+    if (confirm("'" + data + "' want's to play\n" +
+                "are you ready to play right now?") &&
+            socket.connected) {
         socket.emit('ready', $namefield.val());
         $seeking.hide();
         $available.show();
-    } else {
     }
     console.log(data);
 });
@@ -100,9 +114,10 @@ socket.on('ready', function(data) {
             '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
             '<span aria-hidden="true">&times;</span>' +
             '</button><span id="alertmsg"></span></div>';
-    if (data.length == 1) message = 'player ' + data.join(', ') + ' is ready';
-    else  message = 'players ' + data.join(', ') + ' are ready'
+    if (Object.keys(data).length == 1) message = 'player ' + objectJoin(data, ', ') + ' is ready';
+    else  message = 'players ' + objectJoin(data, ', ') + ' are ready'
     if (!$('.alert')[0]) $('#content').prepend(alert);
+    else $('.alert-success').removeClass('alert-success').addClass('alert-info');
     $('#alertmsg').empty().append(message);
 });
 
@@ -110,23 +125,39 @@ socket.on('finished', function(data) {
     $('.alert-info').removeClass('alert-info').addClass('alert-success');
 });
 
-$(document).ready(function() {
+socket.on('availablecount', function(data) {
+    $count.empty().append(data);
+});
+
+socket.on('enable', function(data) {
+    $seekingsubmit.prop('disabled', !data);
+});
+
+//$(document).ready(function() {
+//    $available.show();
+//});
+socket.on('connect', function () {
     $available.show();
 });
 
-$available.submit(function (event) {
+socket.on('disconnect', function () {
+    $available.hide();
+    $seeking.hide();
+    $('.alert').remove();
+});
+
+$('#available .submit').click(function (event) {
     $available.hide();
     $seeking.show();
-    event.preventDefault();
     socket.emit('available', $namefield.val());
 });
-$seeking.submit(function (event) {
+$seekingsubmit.click(function (event) {
     $seeking.hide();
     $available.show();
     event.preventDefault();
     socket.emit('checkready', $namefield.val());
 });
-$('#seeking > .cancel').click(function (event) {
+$('#seeking .cancel').click(function (event) {
     $seeking.hide();
     $available.show();
     event.preventDefault();

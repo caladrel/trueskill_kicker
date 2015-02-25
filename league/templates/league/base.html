@@ -40,9 +40,6 @@ td.num {
             <div class="collapse navbar-collapse">
                 {% block navigation %}
                 <ul class="nav navbar-nav">
-                    {% block navigation_home %}
-                    <li><a href="{% url 'league:index' %}">Home</a></li>
-                    {% endblock %}
                     {% block navigation_matches %}
                     <li><a href="{% url 'league:index' %}">Matches</a></li>
                     {% endblock %}
@@ -52,13 +49,20 @@ td.num {
                     {% block navigation_top %}
                     <li><a href="{% url 'league:players_top' %}">Top ten</a></li>
                     {% endblock %}
-                    {% block navigation_simulator %}
-                    <li><a href="/simulator">Simulator</a></li>
-                    {% endblock %}
                     {% block navigation_about %}
                     <li><a href="{% url 'league:about' %}">About</a></li>
                     {% endblock %}
                 </ul>
+                <form id="available" class="navbar-form navbar-right" style="display:none">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Player">
+                    </div>
+                    <button type="submit" class="btn btn-primary">I'm available</button>
+                </form>
+                <form id="seeking" class="navbar-form navbar-right" style="display:none">
+                    <button class="cancel btn btn-default">I'm not available</button>
+                    <button type="submit" class="btn btn-primary">I want to play now</button>
+                </form>
                 <ul class="nav navbar-nav navbar-right">
                     {% load simplecookie_state_selector %}
                     {% state_selector 'c' c='Combined mode' a='Attacker mode' d='Defender mode' %}
@@ -67,10 +71,67 @@ td.num {
             </div><!--/.nav-collapse -->
         </div>
     </div>
-    <div class="container">
+    <div id="content" class="container">
         {% block content %}{% endblock %}
     </div>
     <script src="//code.jquery.com/jquery.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+var socket = io();
+var $available = $('#available'),
+    $seeking = $('#seeking'),
+    $namefield = $available.find('input');
+
+socket.on('check', function(data) {
+    if (confirm("'" + data + "' want's to play\nare you ready to play right now?")) {
+        socket.emit('ready', $namefield.val());
+        $seeking.hide();
+        $available.show();
+    } else {
+    }
+    console.log(data);
+});
+
+socket.on('ready', function(data) {
+    var message,
+        alert = '<div class="alert alert-info" alert-dismissable role="alert">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '<span aria-hidden="true">&times;</span>' +
+            '</button><span id="alertmsg"></span></div>';
+    if (data.length == 1) message = 'player ' + data.join(', ') + ' is ready';
+    else  message = 'players ' + data.join(', ') + ' are ready'
+    if (!$('.alert')[0]) $('#content').prepend(alert);
+    $('#alertmsg').empty().append(message);
+});
+
+socket.on('finished', function(data) {
+    $('.alert-info').removeClass('alert-info').addClass('alert-success');
+});
+
+$(document).ready(function() {
+    $available.show();
+});
+
+$available.submit(function (event) {
+    $available.hide();
+    $seeking.show();
+    event.preventDefault();
+    socket.emit('available', $namefield.val());
+});
+$seeking.submit(function (event) {
+    $seeking.hide();
+    $available.show();
+    event.preventDefault();
+    socket.emit('checkready', $namefield.val());
+});
+$('#seeking > .cancel').click(function (event) {
+    $seeking.hide();
+    $available.show();
+    event.preventDefault();
+    socket.emit('unavailable', $namefield.val());
+});
+    </script>
 </body>
 </html>

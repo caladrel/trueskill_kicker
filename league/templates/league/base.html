@@ -94,8 +94,17 @@ var socket = io();
 var $available = $('#available'),
     $seeking = $('#seeking'),
     $seekingsubmit = $('#seeking .submit'),
-    $namefield = $available.find('input'),
+    $namefield = $('#available input[type=text]'),
     $count = $('#seeking .badge');
+
+$(document).ready(function () {
+    if (null != localStorage.getItem('name'))
+        $namefield.val(localStorage.getItem('name'));
+})
+
+$namefield.change(function () {
+    localStorage.setItem('name', $namefield.val());
+});
 
 socket.on('check', function(data) {
     if (confirm("'" + data + "' want's to play\n" +
@@ -108,34 +117,6 @@ socket.on('check', function(data) {
     console.log(data);
 });
 
-socket.on('ready', function(data) {
-    var message,
-        alert = '<div class="alert alert-info" alert-dismissable role="alert">' +
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-            '<span aria-hidden="true">&times;</span>' +
-            '</button><span id="alertmsg"></span></div>';
-    if (Object.keys(data).length == 1) message = 'player ' + objectJoin(data, ', ') + ' is ready';
-    else  message = 'players ' + objectJoin(data, ', ') + ' are ready'
-    if (!$('.alert')[0]) $('#content').prepend(alert);
-    else $('.alert-success').removeClass('alert-success').addClass('alert-info');
-    $('#alertmsg').empty().append(message);
-});
-
-socket.on('finished', function(data) {
-    $('.alert-info').removeClass('alert-info').addClass('alert-success');
-});
-
-socket.on('availablecount', function(data) {
-    $count.empty().append(data);
-});
-
-socket.on('enable', function(data) {
-    $seekingsubmit.prop('disabled', !data);
-});
-
-//$(document).ready(function() {
-//    $available.show();
-//});
 socket.on('connect', function () {
     $available.show();
 });
@@ -162,6 +143,31 @@ $('#seeking .cancel').click(function (event) {
     $available.show();
     event.preventDefault();
     socket.emit('unavailable', $namefield.val());
+});
+
+socket.on('ready', function(data) {
+    var message,
+        alert = '<div class="alert alert-info" alert-dismissable role="alert">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '<span aria-hidden="true">&times;</span>' +
+            '</button><span id="alertmsg"></span></div>';
+    if (Object.keys(data).length == 1) message = 'player ' + objectJoin(data, ', ') + ' is ready';
+    else  message = 'players ' + objectJoin(data, ', ') + ' are ready'
+    if (!$('.alert')[0]) $('#content').prepend(alert);
+    else $('.alert-success').removeClass('alert-success').addClass('alert-info');
+    $('#alertmsg').empty().append(message);
+});
+
+socket.on('finished', function(data) {
+    $('.alert-info').removeClass('alert-info').addClass('alert-success');
+});
+
+socket.on('availablecount', function(data) {
+    $count.empty().append(data);
+});
+
+socket.on('enable', function(data) {
+    $seekingsubmit.prop('disabled', !data);
 });
     </script>
 </body>

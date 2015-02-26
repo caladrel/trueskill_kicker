@@ -63,14 +63,14 @@ td.num {
                     <button class="submit btn btn-primary navbar-btn">
                         I want to play now <span class="badge">0</span></button>
                 </div>
-                <div id="available" class="navbar-right navbar-btn" style="display:none">
+                <form id="available" class="navbar-right navbar-btn" style="display:none">
                     <div class="input-group" style="width:292px">
                     <input type="text" class="form-control" placeholder="Player">
                     <span class="input-group-btn">
-                        <button class="submit btn btn-primary" type="button">I'm available</button>
+                        <button class="btn btn-primary" type="submit">I'm available</button>
                     </span>
                     </div>
-                </div>
+                </form>
                 {% endblock %}
             </div><!--/.nav-collapse -->
         </div>
@@ -119,6 +119,9 @@ socket.on('check', function(data) {
 
 socket.on('connect', function () {
     $available.show();
+    $namefield.focus();
+    len = $namefield.val().length*2;
+    $namefield[0].setSelectionRange(len, len);
 });
 
 socket.on('disconnect', function () {
@@ -127,21 +130,21 @@ socket.on('disconnect', function () {
     $('.alert').remove();
 });
 
-$('#available .submit').click(function (event) {
+$available.submit(function (event) {
     $available.hide();
     $seeking.show();
+    $seekingsubmit.focus();
+    event.preventDefault();
     socket.emit('available', $namefield.val());
 });
 $seekingsubmit.click(function (event) {
     $seeking.hide();
     $available.show();
-    event.preventDefault();
     socket.emit('checkready', $namefield.val());
 });
 $('#seeking .cancel').click(function (event) {
     $seeking.hide();
     $available.show();
-    event.preventDefault();
     socket.emit('unavailable', $namefield.val());
 });
 

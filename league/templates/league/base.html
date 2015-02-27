@@ -127,6 +127,7 @@ $namefield.change(function () {
 });
 
 socket.on('check', function (data) {
+    new Notification("Are you ready to play?");
     var msg = "'" + data + "' want's to play\n";
     $alertDialog.find('p').text(msg);
     $alertDialog.modal('show');
@@ -154,6 +155,7 @@ socket.on('disconnect', function () {
 });
 
 $available.submit(function (event) {
+    checkIfNotifications();
     $available.hide();
     $seeking.show();
     $seekingsubmit.focus();
@@ -195,6 +197,16 @@ socket.on('availablecount', function(data) {
 socket.on('enable', function(data) {
     $seekingsubmit.prop('disabled', !data);
 });
+
+function checkIfNotifications () {
+    if (window.Notification && Notification.permission !== "granted") {
+        Notification.requestPermission(function (status) {
+            if (Notification.permission !== status) {
+                Notification.permission = status;
+            }
+        });
+    }
+}
     </script>
 </body>
 </html>

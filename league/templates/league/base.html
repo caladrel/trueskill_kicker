@@ -26,6 +26,23 @@ td.num {
     {% block header %}{% endblock %}
 </head>
 <body>
+    <div id="alertDialog" class="modal" tabindex="-1" role="dialog" aria-labelledby="alertDialogLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="alertDialogLabel">Are you ready to play right now?</h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">I'm not ready</button>
+                    <button type="button" class="btn btn-primary">I'm ready</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -59,7 +76,8 @@ td.num {
                 </ul>
                 <div class="navbar-right" style="display:none"></div>
                 <div id="seeking" class="btn-group navbar-right" style="display:none">
-                    <button class="cancel btn btn-default navbar-btn">I'm not available</button>
+                    <button class="cancel btn btn-default navbar-btn">
+                        I'm not available</button>
                     <button class="submit btn btn-primary navbar-btn">
                         I want to play now <span class="badge">0</span></button>
                 </div>
@@ -67,7 +85,8 @@ td.num {
                     <div class="input-group" style="width:292px">
                     <input type="text" class="form-control" placeholder="Player">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="submit">I'm available</button>
+                        <button class="btn btn-primary" type="submit">
+                            I'm available <span class="badge">0</span></button>
                     </span>
                     </div>
                 </form>
@@ -94,8 +113,9 @@ var socket = io();
 var $available = $('#available'),
     $seeking = $('#seeking'),
     $seekingsubmit = $('#seeking .submit'),
+    $alertDialog = $('#alertDialog'),
     $namefield = $('#available input[type=text]'),
-    $count = $('#seeking .badge');
+    $count = $('.badge');
 
 $(document).ready(function () {
     if (null != localStorage.getItem('name'))
@@ -106,15 +126,18 @@ $namefield.change(function () {
     localStorage.setItem('name', $namefield.val());
 });
 
-socket.on('check', function(data) {
-    if (confirm("'" + data + "' want's to play\n" +
-                "are you ready to play right now?") &&
-            socket.connected) {
-        socket.emit('ready', $namefield.val());
-        $seeking.hide();
-        $available.show();
-    }
+socket.on('check', function (data) {
+    var msg = "'" + data + "' want's to play\n";
+    $alertDialog.find('p').text(msg);
+    $alertDialog.modal('show');
     console.log(data);
+});
+
+$alertDialog.find('.btn-primary').click(function () {
+    socket.emit('ready', $namefield.val());
+    $alertDialog.modal('hide');
+    $seeking.hide();
+    $available.show();
 });
 
 socket.on('connect', function () {
@@ -158,7 +181,7 @@ socket.on('ready', function(data) {
     else  message = 'players ' + objectJoin(data, ', ') + ' are ready'
     if (!$('.alert')[0]) $('#content').prepend(alert);
     else $('.alert-success').removeClass('alert-success').addClass('alert-info');
-    $('#alertmsg').empty().append(message);
+    $('#alertmsg').empty().text(message);
 });
 
 socket.on('finished', function(data) {

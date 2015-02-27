@@ -13,7 +13,8 @@ var io = new Server(server);
 
 var state = {
    checking: false,
-   players: []
+   players: [],
+   timeoutId: null
 }
 
 function broadcastcount () {
@@ -33,14 +34,6 @@ function broadcastready () {
     io.sockets.in('ready').emit('ready', state.players);
 }
 
-function finish () {
-    state.checking = false;
-    io.sockets.in('ready').emit('finished');
-    if ('ready' in io.sockets.adapter.rooms)
-        for (id in io.sockets.adapter.rooms['ready'])
-            io.sockets.connected[id].leave('ready');
-}
-
 function ready (id, player) {
     if (Object.keys(state.players).length < 4) {
         state.players[id] = player;
@@ -51,6 +44,27 @@ function ready (id, player) {
 
     console.log(id, 'player', player, 'is ready');
     console.log(state.players);
+    broadcastcount();
+}
+
+function finish () {
+    state.checking = false;
+    if (state.timeoutId != null)
+        clearTimeout(state.timeoutId);
+    state.timeoutId = null;
+    io.sockets.in('ready').emit('finished');
+    if ('ready' in io.sockets.adapter.rooms)
+        for (id in io.sockets.adapter.rooms['ready'])
+            io.sockets.connected[id].leave('ready');
+}
+
+function cancel () {
+    state.checking = false;
+    state.timeoutId = null;
+    io.sockets.in('ready').in('available').emit('canceled');
+    if ('ready' in io.sockets.adapter.rooms)
+        for (id in io.sockets.adapter.rooms['ready'])
+            io.sockets.connected[id].leave('ready');
     broadcastcount();
 }
 
@@ -72,6 +86,7 @@ io.on('connection', function (socket) {
         if (!state.checking) {
             state.checking = true;
             state.players = {};
+            state.timeoutId = setTimeout(cancel, 20000);
             io.sockets.in('available').emit('check', data);
         }
         ready(socket.id, data);

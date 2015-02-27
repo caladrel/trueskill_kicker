@@ -109,6 +109,16 @@ function objectJoin(obj, sep) {
     return arr.join(sep);
 }
 
+function checkIfNotifications () {
+    if (window.Notification && Notification.permission !== "granted") {
+        Notification.requestPermission(function (status) {
+            if (Notification.permission !== status) {
+                Notification.permission = status;
+            }
+        });
+    }
+}
+
 var socket = io();
 var $available = $('#available'),
     $seeking = $('#seeking'),
@@ -126,12 +136,25 @@ $namefield.change(function () {
     localStorage.setItem('name', $namefield.val());
 });
 
-socket.on('check', function (data) {
-    new Notification("Are you ready to play?");
-    var msg = "'" + data + "' want's to play\n";
-    $alertDialog.find('p').text(msg);
-    $alertDialog.modal('show');
-    console.log(data);
+$available.submit(function (event) {
+    checkIfNotifications();
+    $available.hide();
+    $seeking.show();
+    $seekingsubmit.focus();
+    event.preventDefault();
+    socket.emit('available', $namefield.val());
+});
+
+$seekingsubmit.click(function (event) {
+    $seeking.hide();
+    $available.show();
+    socket.emit('checkready', $namefield.val());
+});
+
+$('#seeking .cancel').click(function (event) {
+    $seeking.hide();
+    $available.show();
+    socket.emit('unavailable', $namefield.val());
 });
 
 $alertDialog.find('.btn-primary').click(function () {
@@ -154,23 +177,12 @@ socket.on('disconnect', function () {
     $('.alert').remove();
 });
 
-$available.submit(function (event) {
-    checkIfNotifications();
-    $available.hide();
-    $seeking.show();
-    $seekingsubmit.focus();
-    event.preventDefault();
-    socket.emit('available', $namefield.val());
-});
-$seekingsubmit.click(function (event) {
-    $seeking.hide();
-    $available.show();
-    socket.emit('checkready', $namefield.val());
-});
-$('#seeking .cancel').click(function (event) {
-    $seeking.hide();
-    $available.show();
-    socket.emit('unavailable', $namefield.val());
+socket.on('check', function (data) {
+    new Notification("Are you ready to play?");
+    var msg = "'" + data + "' want's to play\n";
+    $alertDialog.find('p').text(msg);
+    $alertDialog.modal('show');
+    console.log(data);
 });
 
 socket.on('ready', function(data) {
@@ -179,15 +191,24 @@ socket.on('ready', function(data) {
             '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
             '<span aria-hidden="true">&times;</span>' +
             '</button><span id="alertmsg"></span></div>';
-    if (Object.keys(data).length == 1) message = 'player ' + objectJoin(data, ', ') + ' is ready';
-    else  message = 'players ' + objectJoin(data, ', ') + ' are ready'
+    if (Object.keys(data).length == 1) message = 'Player ' + objectJoin(data, ',') + ' is ready.';
+    else  message = 'Players ' + objectJoin(data, ', ') + ' are ready.'
     if (!$('.alert')[0]) $('#content').prepend(alert);
-    else $('.alert-success').removeClass('alert-success').addClass('alert-info');
+    else {
+        $('.alert-success').removeClass('alert-success').addClass('alert-info');
+        $('.alert-danger').removeClass('alert-danger').addClass('alert-info');
+    }
     $('#alertmsg').empty().text(message);
 });
 
 socket.on('finished', function(data) {
     $('.alert-info').removeClass('alert-info').addClass('alert-success');
+});
+
+socket.on('canceled', function(data) {
+    $alertDialog.modal('hide');
+    $('.alert-info').removeClass('alert-info').addClass('alert-danger')
+        .find('#alertmsg').prepend("Sorry, too few players have answered.\n\n");
 });
 
 socket.on('availablecount', function(data) {
@@ -198,15 +219,6 @@ socket.on('enable', function(data) {
     $seekingsubmit.prop('disabled', !data);
 });
 
-function checkIfNotifications () {
-    if (window.Notification && Notification.permission !== "granted") {
-        Notification.requestPermission(function (status) {
-            if (Notification.permission !== status) {
-                Notification.permission = status;
-            }
-        });
-    }
-}
     </script>
 </body>
 </html>

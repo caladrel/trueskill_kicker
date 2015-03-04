@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import F
 
 from league.models import Player, Match, PlayerHistory
 from trueskill import Rating, rate
@@ -72,3 +73,12 @@ def refresh_scores():
             player.defender_rank = \
                 defender_rating.mu - 3 * defender_rating.sigma
             player.save()
+
+def reorder_scores():
+    match_list = Match.objects.filter(score_team1__lt=F('score_team2'))
+    for match in match_list:
+        (match.score_team1, match.team1_player1_id, match.team1_player2_id,
+         match.score_team2, match.team2_player1_id, match.team2_player2_id) = \
+        (match.score_team2, match.team2_player1_id, match.team2_player2_id,
+         match.score_team1, match.team1_player1_id, match.team1_player2_id)
+        match.save()

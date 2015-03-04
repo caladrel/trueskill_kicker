@@ -8,6 +8,26 @@ class MatchAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'timestamp')
     list_filter = ('timestamp',)
 
+    change_list_template = 'admin/league/match_list.html'
+
+    def get_urls(self):
+        urls = super(MatchAdmin, self).get_urls()
+        new_urls = patterns(
+            '',
+            url(r'^reorder/$', self.admin_site.admin_view(self.reorder),
+                name='league_match_reorder')
+        )
+        return new_urls + urls
+
+    def reorder(self, request):
+        from league.helper import reorder_scores
+        reorder_scores()
+        context = {
+            'opts': self.model._meta,
+            'title': 'Reordering scores has been successful!',
+        }
+        return render(request, 'admin/league/refresh.html', context)
+
 
 class PlayerAdmin(admin.ModelAdmin):
     change_list_template = 'admin/league/player_list.html'

@@ -54,6 +54,11 @@ class MatchCreate(generic.CreateView):
         from trueskill import Rating, rate
         match = form.save(commit=False)
         histories = []
+        if match.score_team2 > match.score_team1:  # put winning team first
+            (match.score_team1, match.team1_player1, match.team1_player2,
+             match.score_team2, match.team2_player1, match.team2_player2) = \
+            (match.score_team2, match.team2_player1, match.team2_player2,
+             match.score_team1, match.team1_player1, match.team1_player2)
         player_list = (match.team1_player1, match.team1_player2,
                        match.team2_player1, match.team2_player2)
         ratings = [Rating(mu=p.mu, sigma=p.sigma) for p in player_list]

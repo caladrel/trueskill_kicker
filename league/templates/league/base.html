@@ -26,23 +26,6 @@ td.num {
     {% block header %}{% endblock %}
 </head>
 <body>
-    <div id="alertDialog" class="modal" tabindex="-1" role="dialog" aria-labelledby="alertDialogLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="alertDialogLabel">Are you ready to play right now?</h4>
-                </div>
-                <div class="modal-body">
-                    <p></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">I'm not ready</button>
-                    <button type="button" class="btn btn-primary">I'm ready</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -57,6 +40,9 @@ td.num {
             <div class="collapse navbar-collapse">
                 {% block navigation %}
                 <ul class="nav navbar-nav">
+                    {% block navigation_home %}
+                    <li><a href="{% url 'league:index' %}">Home</a></li>
+                    {% endblock %}
                     {% block navigation_matches %}
                     <li><a href="{% url 'league:index' %}">Matches</a></li>
                     {% endblock %}
@@ -66,6 +52,9 @@ td.num {
                     {% block navigation_top %}
                     <li><a href="{% url 'league:players_top' %}">Top ten</a></li>
                     {% endblock %}
+                    {% block navigation_simulator %}
+                    <li><a href="/simulator">Simulator</a></li>
+                    {% endblock %}
                     {% block navigation_about %}
                     <li><a href="{% url 'league:about' %}">About</a></li>
                     {% endblock %}
@@ -74,151 +63,14 @@ td.num {
                     {% load simplecookie_state_selector %}
                     {% state_selector 'c' c='Combined mode' a='Attacker mode' d='Defender mode' %}
                 </ul>
-                <div class="navbar-right" style="display:none"></div>
-                <div id="seeking" class="btn-group navbar-right" style="display:none">
-                    <button class="cancel btn btn-default navbar-btn">
-                        I'm not available</button>
-                    <button class="submit btn btn-primary navbar-btn">
-                        I want to play now <span class="badge">0</span></button>
-                </div>
-                <form id="available" class="navbar-right navbar-btn" style="display:none">
-                    <div class="input-group" style="width:292px">
-                    <input type="text" class="form-control" placeholder="Player">
-                    <span class="input-group-btn">
-                        <button class="btn btn-primary" type="submit">
-                            I'm available <span class="badge">0</span></button>
-                    </span>
-                    </div>
-                </form>
                 {% endblock %}
             </div><!--/.nav-collapse -->
         </div>
     </div>
-    <div id="content" class="container">
+    <div class="container">
         {% block content %}{% endblock %}
     </div>
     <script src="//code.jquery.com/jquery.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-
-function objectJoin(obj, sep) {
-    var arr = [], p, i = 0;
-    for (p in obj)
-        arr[i++] = obj[p];
-    return arr.join(sep);
-}
-
-function checkIfNotifications () {
-    if (window.Notification && Notification.permission !== "granted") {
-        Notification.requestPermission(function (status) {
-            if (Notification.permission !== status) {
-                Notification.permission = status;
-            }
-        });
-    }
-}
-
-var socket = io();
-var $available = $('#available'),
-    $seeking = $('#seeking'),
-    $seekingsubmit = $('#seeking .submit'),
-    $alertDialog = $('#alertDialog'),
-    $namefield = $('#available input[type=text]'),
-    $count = $('.badge');
-
-$(document).ready(function () {
-    if (null != localStorage.getItem('name'))
-        $namefield.val(localStorage.getItem('name'));
-})
-
-$namefield.change(function () {
-    localStorage.setItem('name', $namefield.val());
-});
-
-$available.submit(function (event) {
-    checkIfNotifications();
-    $available.hide();
-    $seeking.show();
-    $seekingsubmit.focus();
-    event.preventDefault();
-    socket.emit('available', $namefield.val());
-});
-
-$seekingsubmit.click(function (event) {
-    $seeking.hide();
-    $available.show();
-    socket.emit('checkready', $namefield.val());
-});
-
-$('#seeking .cancel').click(function (event) {
-    $seeking.hide();
-    $available.show();
-    socket.emit('unavailable', $namefield.val());
-});
-
-$alertDialog.find('.btn-primary').click(function () {
-    socket.emit('ready', $namefield.val());
-    $alertDialog.modal('hide');
-    $seeking.hide();
-    $available.show();
-});
-
-socket.on('connect', function () {
-    $available.show();
-    $namefield.focus();
-    len = $namefield.val().length*2;
-    $namefield[0].setSelectionRange(len, len);
-});
-
-socket.on('disconnect', function () {
-    $available.hide();
-    $seeking.hide();
-    $('.alert').remove();
-});
-
-socket.on('check', function (data) {
-    new Notification("Are you ready to play?");
-    var msg = "'" + data + "' want's to play\n";
-    $alertDialog.find('p').text(msg);
-    $alertDialog.modal('show');
-    console.log(data);
-});
-
-socket.on('ready', function(data) {
-    var message,
-        alert = '<div class="alert alert-info" alert-dismissable role="alert">' +
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-            '<span aria-hidden="true">&times;</span>' +
-            '</button><span id="alertmsg"></span></div>';
-    if (Object.keys(data).length == 1) message = 'Player ' + objectJoin(data, ',') + ' is ready.';
-    else  message = 'Players ' + objectJoin(data, ', ') + ' are ready.'
-    if (!$('.alert')[0]) $('#content').prepend(alert);
-    else {
-        $('.alert-success').removeClass('alert-success').addClass('alert-info');
-        $('.alert-danger').removeClass('alert-danger').addClass('alert-info');
-    }
-    $('#alertmsg').empty().text(message);
-});
-
-socket.on('finished', function(data) {
-    $('.alert-info').removeClass('alert-info').addClass('alert-success');
-});
-
-socket.on('canceled', function(data) {
-    $alertDialog.modal('hide');
-    $('.alert-info').removeClass('alert-info').addClass('alert-danger')
-        .find('#alertmsg').prepend("Sorry, too few players have answered.\n\n");
-});
-
-socket.on('availablecount', function(data) {
-    $count.empty().append(data);
-});
-
-socket.on('enable', function(data) {
-    $seekingsubmit.prop('disabled', !data);
-});
-
-    </script>
 </body>
 </html>

@@ -1,8 +1,0 @@
-{
-  "name": "django_sockio_proxy",
-  "version": "0.0.1",
-  "dependencies": {
-    "http-proxy": "latest",
-    "socket.io": "latest"
-  }
-}
